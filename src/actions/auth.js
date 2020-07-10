@@ -10,8 +10,27 @@ import {
     RESET_PASSWORD_FAIL,
     RESET_PASSWORD_CONFIRM_SUCCESS,
     RESET_PASSWORD_CONFIRM_FAIL,
-    LOGOUT
+    LOGOUT,
+    AUTHENTICATED_FAIL,
+    AUTHENTICATED_SUCCESS
 } from './types';
+
+export const checkAuthenticated = () => dispatch => {
+    if (typeof window == 'undefined') {
+        dispatch({
+            type: AUTHENTICATED_FAIL
+        });
+    }
+    if (localStorage.getItem('access')) {
+        dispatch({
+            type: AUTHENTICATED_SUCCESS
+        });
+    } else {
+        dispatch({
+            type: AUTHENTICATED_FAIL
+        });
+    }
+};
 
 export const login = (email, password) => async dispatch => {
     const config = {

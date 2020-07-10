@@ -15,16 +15,38 @@ import {
     AUTHENTICATED_SUCCESS
 } from './types';
 
-export const checkAuthenticated = () => dispatch => {
+export const checkAuthenticated = () => async dispatch => {
     if (typeof window == 'undefined') {
         dispatch({
             type: AUTHENTICATED_FAIL
         });
     }
     if (localStorage.getItem('access')) {
-        dispatch({
-            type: AUTHENTICATED_SUCCESS
-        });
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+    
+        const body = JSON.stringify({ token: localStorage.getItem('access') });
+    
+        try {
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/jwt/verify/`, body, config);
+    
+            if (res.data.code !== 'token_not_valid') {
+                dispatch({
+                    type: AUTHENTICATED_SUCCESS
+                });
+            } else {
+                dispatch({
+                    type: AUTHENTICATED_FAIL
+                });
+            }
+        } catch (err) {
+            dispatch({
+                type: AUTHENTICATED_FAIL
+            });
+        }
     } else {
         dispatch({
             type: AUTHENTICATED_FAIL

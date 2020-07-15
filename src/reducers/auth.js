@@ -5,13 +5,16 @@ import {
     LOGIN_FAIL,
     LOGOUT,
     AUTHENTICATED_FAIL,
-    AUTHENTICATED_SUCCESS
+    AUTHENTICATED_SUCCESS,
+    USER_LOADED_SUCCESS,
+    USER_LOADED_FAIL
 } from '../actions/types';
 
 const initialState = {
     access: localStorage.getItem('access'),
     refresh: localStorage.getItem('refresh'),
-    isAuthenticated: null
+    isAuthenticated: null,
+    user: null
 };
 
 export default function(state = initialState, action) {
@@ -31,6 +34,11 @@ export default function(state = initialState, action) {
                 access: payload.access,
                 refresh: payload.refresh
             }
+        case USER_LOADED_SUCCESS:
+            return {
+                ...state,
+                user: payload
+            }
         case SIGNUP_SUCCESS:
             return {
                 ...state,
@@ -41,6 +49,11 @@ export default function(state = initialState, action) {
                 ...state,
                 isAuthenticated: false
             }
+        case USER_LOADED_FAIL:
+            return {
+                ...state,
+                user: null
+            }
         case SIGNUP_FAIL:
         case LOGIN_FAIL:
         case LOGOUT:
@@ -50,7 +63,8 @@ export default function(state = initialState, action) {
                 ...state,
                 access: null,
                 refresh: null,
-                isAuthenticated: false
+                isAuthenticated: false,
+                user: null
             }
         default:
             return state
